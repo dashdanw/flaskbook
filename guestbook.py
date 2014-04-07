@@ -43,12 +43,12 @@ def do_admin_login():
 def moderate_posts():
     if not session.get('logged_in'):
         abort(401)
-    offset = 0
+    to_delete = []
     for key in request.form:
         if not key.startswith('remove_'):
             continue
-        index = int(key.partition('_')[2]) - offset
-        to_delete.append()
+        index = int(key.partition('_')[2])
+        to_delete.append(index)
     to_delete.sort()
     for offset, index in enumerate(to_delete):
         index -= offset
