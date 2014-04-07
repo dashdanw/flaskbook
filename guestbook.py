@@ -26,7 +26,10 @@ def submit():
 
 @app.route('/admin')
 def admin_login():
-    return render_template('login.html')
+    if not session.get('logged_in'):
+        return render_template('login.html')
+    else:
+        return redirect("/",code=302)
 
 @app.route('/admin', methods=['POST'])
 def do_admin_login():
@@ -41,7 +44,7 @@ def moderate_posts():
     if not session.get('logged_in'):
         abort(401)
     for key in request.form:
-        if not key.startswith('delete_'):
+        if not key.startswith('remove_'):
             continue
         index = int(key.partition('_')[2])
         del entries[index]
