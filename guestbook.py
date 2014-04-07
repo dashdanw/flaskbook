@@ -1,6 +1,6 @@
 import datetime
 
-from flask import Flask, flash, redirect, render_template, request, session
+from flask import Flask, flash, redirect, render_template, request, session, abort
 
 
 app = Flask(__name__)
@@ -16,10 +16,10 @@ def index():
 
 @app.route('/submit', methods=['POST'])
 def submit():
-    entries.append(request.form['entry'] or '<blank>')
     if not request.form['name']:
         flash("you must provide a name!")
         return redirect('/')
+    entries.append(request.form['entry'] or '<blank>')
     entry_names.append(request.form['name'])
     entry_dates.append(datetime.datetime.now())
     return redirect('/')
@@ -38,6 +38,8 @@ def do_admin_login():
 
 @app.route('/moderate', methods=['POST'])
 def moderate_posts():
+    if not session.get('logged_in'):
+        abort(401)
     for key in request.form:
         if not key.startswith('delete_'):
             continue
@@ -45,6 +47,7 @@ def moderate_posts():
         del entries[index]
         del entry_names[index]
     return redirect('/')
+
 
 
 if __name__ == '__main__':
